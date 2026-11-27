@@ -1,0 +1,11 @@
+import studioImages from './studio-images.json';
+import filaments from './filaments.json';
+import machines from './printers.json';
+export type Product={id:string;name:string;brand:string;category:string;material:string;color:string;hex:string;price:number;cardPrice:number;image:string;stock:number;detail:string;description:string;tag:string;family?:string;sourcePage?:number;availabilityUnknown?:boolean;cardPriceConfirmed?:boolean;sourceImage?:string;images?:string[];flyer?:boolean};
+const portfolio=filaments as Product[];
+const printers=machines as Product[];
+export const catalog:Product[]=[...printers,...portfolio].map(p=>({...p,description:p.description.replace(' Consulte a disponibilidade com a loja.',''),...(p.id==='a1'?{image:'/images/a1-client.png',flyer:false,images:['/images/a1-client.png',p.image]}:{}),...((studioImages as Record<string,string>)[p.id]?{image:(studioImages as Record<string,string>)[p.id],flyer:false,images:[(studioImages as Record<string,string>)[p.id],...(p.id==='a1'?['/images/a1-client.png']:[]),p.image]}:{}),stock:100,availabilityUnknown:false,tag:p.tag==='Pré-reserva'?'':p.tag}));
+export const materials=[...new Set(portfolio.map(p=>p.material))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+export const brands=['Bambu Lab','Elegoo','National 3D','Multfila','Polymaker','Sunlu','F3D','Snapmaker'];
+export const initialState=()=>({inventoryRevision:2,address:null,profile:{name:"Cliente demonstração",phone:"",city:"",newsletter:false,preferredPayment:"pix"},stock:Object.fromEntries(catalog.map(p=>[p.id,p.stock])),orders:[] as any[],events:[] as any[],overrides:{} as Record<string,any>,user:null as any});
+export const money=(n:number)=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(n/100);
